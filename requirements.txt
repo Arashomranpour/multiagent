@@ -1,0 +1,7 @@
+langchain 
+langchain-community 
+pandas 
+numpy 
+faiss-cpu 
+tensorflow
+tiktoken
