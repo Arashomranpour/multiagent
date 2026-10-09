@@ -1,61 +1,59 @@
-# MultiAgent RAG System
+<div align="center">
 
-This project implements a Multi-Agent Retrieval-Augmented Generation (RAG) system. The goal is to enhance response generation by incorporating multiple agents that retrieve relevant information from different sources and collaborate to provide well-informed responses. This approach leverages the power of both language modeling and retrieval-based systems.
+# 🕸️ Multi-Agent RAG with LangGraph
 
-## Features
+**A LangGraph workflow that decides whether to answer from a local vector store or from Wikipedia - powered by Groq's Llama 3.1 70B.**
 
-- **Multi-Agent Collaboration**: Multiple agents work together to retrieve and generate responses.
-- **Retrieval-Augmented Generation (RAG)**: Combines retrieval of relevant documents with generation using a pre-trained language model.
-- **Dynamic Query Handling**: Supports dynamic queries by retrieving documents and generating responses based on the most relevant information.
-- **Modular Design**: Agents are modular, allowing for the addition of more specialized agents for different tasks.
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-1C3C3C?logo=langchain&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq-F55036)
+![FAISS](https://img.shields.io/badge/FAISS-0467DF)
+![Colab](https://img.shields.io/badge/Open_in-Colab-F9AB00?logo=googlecolab&logoColor=white)
 
-## Project Structure
+</div>
 
-- `multiagentRAG.ipynb`: Jupyter notebook implementing the MultiAgent RAG system.
-- `requirements.txt`: List of Python dependencies needed for the project.
-- `README.md`: Overview and documentation of the project.
+---
 
-## Installation and Setup
+## ✨ Overview
 
-To set up this project locally, follow the steps below:
+`mutltiagentRAG.ipynb` implements an agentic RAG system:
 
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/Arashomranpour/multiagent.git
-    cd multiagent
-    ```
+- 📚 **Vector store** - blog posts are loaded with `WebBaseLoader`, split into chunks, embedded with `sentence-transformers/all-MiniLM-L6-v2` and indexed in **FAISS**.
+- 🌍 **Wikipedia search** - a second tool for questions outside the indexed documents.
+- 🧭 **Router** - the LLM (`Llama-3.1-70b-versatile` on **Groq**) chooses the right source for each question.
+- 🕸️ **LangGraph** - a `StateGraph` with `wiki_search` and `retrieve` nodes and conditional edges produces the final answer.
 
-2. **Install the required dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
+```mermaid
+flowchart LR
+    Q([Question]) --> R{Router LLM}
+    R -- indexed topics --> V[🗄️ Retrieve from FAISS]
+    R -- everything else --> W[🌍 Wikipedia search]
+    V --> A([Answer])
+    W --> A
+```
 
-3. **Run the Jupyter notebook**:
-    Launch `multiagentRAG.ipynb` in Jupyter and run the cells to execute the system.
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Arashomranpour/multiagent/blob/main/mutltiagentRAG.ipynb)
 
-## Requirements
+## 🚀 Getting Started
 
-- Python 3.8 or higher
-- `transformers`: Hugging Face's transformer library for the language model.
-- `faiss`: Library for efficient similarity search and clustering of dense vectors.
-- `langchain`: Framework for building agents that can use LLMs, tools, and knowledge bases.
-- Jupyter Notebook (to run `.ipynb` files)
+1. Get a [Groq API key](https://console.groq.com/keys) and a [Hugging Face token](https://huggingface.co/settings/tokens).
+2. In Colab, store the Groq key as a secret named `groq_api_key`; locally, set it as an environment variable.
 
-## Usage
+```bash
+git clone https://github.com/Arashomranpour/multiagent.git
+cd multiagent
+pip install -r requirements.txt
+jupyter notebook mutltiagentRAG.ipynb
+```
 
-Once the environment is set up, you can execute the notebook, which will:
-- Initialize multiple agents.
-- Perform document retrieval based on input queries.
-- Generate responses using retrieved documents.
-The agents collaborate to refine the final answer, ensuring more relevant and accurate results.
+## 📁 Project Structure
 
-## Future Enhancements
+```
+.
+├── mutltiagentRAG.ipynb   # Vector store, router, LangGraph workflow
+└── requirements.txt
+```
 
-- **Custom Agents**: Introduce agents specialized in particular domains to handle more complex queries.
-- **Performance Optimization**: Improve retrieval and generation speed for large datasets.
-- **Integration with External APIs**: Allow agents to fetch real-time data from APIs for more dynamic responses.
+## 🛠️ Tech Stack
 
-## Contributing
-
-Contributions are welcome! Feel free to fork the repository, submit issues, or create pull requests to enhance the system.
-
+`LangGraph` · `LangChain` · `Groq` · `FAISS` · `Hugging Face embeddings`
